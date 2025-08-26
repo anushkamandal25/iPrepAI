@@ -127,7 +127,7 @@ const CreateSessionForm = () => {
         className="btn-primary w-full mt-2"
         disabled={isLoading}
         >
-        {!isLoading && <SpinnerLoader />} Create Session
+        {isLoading && <SpinnerLoader />} Create Session
         </button>
     </form>
     </div>
