@@ -143,7 +143,7 @@ const Landingpage = () => {
   </div>
 
   <div className="text-sm bg-gray-50 text-secondary text-center p-5 mt-5">
-    Made with ❤️ by Anushka Mandal. Copyright © 2025. All rights
+    Made with ❤️ by Anushka Mandal.  Copyright © 2025. All rights
     reserved.
   </div>
 </div>
