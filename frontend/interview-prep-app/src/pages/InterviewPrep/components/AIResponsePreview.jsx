@@ -62,7 +62,7 @@ const AIResponsePreview = ({ content }) => {
                 h4({ children }){
                     return <h4 className="text-base font-bold mt-4 mb-2">{children}</h4>;
                 },
-                a({ children }){
+                a({ children, href }){
                     return <a href={href} className="text-blue-600 hover:underline">{children}</a>;
                 },
                 table({ children }){
@@ -111,13 +111,13 @@ function CodeBlock({ code, language }){
     const copyCode=()=>{
         navigator.clipboard.writeText(code);
         setCopied(true);
-        setTimeout(()=>setCopied(false, 2000));
+        setTimeout(()=>setCopied(false), 2000);
     };
 
     return <div className="relative my-6 rounded-lg overflow-hidden bg-gray-50 border border-gray-50">
         <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-                <LuCode size={16} classname="text-gray-500" />
+                <LuCode size={16} className="text-gray-500" />
                 <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{language || 'Code'}</span>
             </div>
             <button
@@ -126,7 +126,7 @@ function CodeBlock({ code, language }){
                 aria-label="Copy code"
             >
                 {copied ? (
-                    <LuCheck size={16} classname="text-green-600" />
+                    <LuCheck size={16} className="text-green-600" />
                 ):(
                     <LuCopy size={16} />
                 )}
