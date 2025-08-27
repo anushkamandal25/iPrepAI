@@ -93,10 +93,47 @@ const InterviewPrep = () => {
   // Add more questions to a session
   const uploadMoreQuestions = async () => {
     try{
+      setIsUpdateLoader(true);
 
+      //Call AI API to generate questions
+      const aiResponse = await axiosInstance.post(
+        API_PATHS.AI.GENERATE_QUESTIONS,
+        {
+          role: sessionData?.role,
+          experience: sessionData?.experience, 
+          topicsToFocus: Array.isArray(sessionData?.topicsToFocus)
+            ? sessionData?.topicsToFocus
+            : [sessionData?.topicsToFocus], // make sure it's always array
+          numberOfQuestions: 10,
+        }
+      );
+
+      //Should be array like [{question, answer}, ...]
+      const generatedQuestions = aiResponse.data;
+
+      const response = await axiosInstance.post(
+        API_PATHS.QUESTION.ADD_TO_SESSION,
+        {
+          sessionId,
+          questions: generatedQuestions,
+        }
+      );
+
+      if(response.data){
+        toast.success('More Questions Added Successfully')
+        fetchSessionDetailsById();
+      }
     }catch(error){
-      console.error("Error:", error);
+      if(error.response && error.response.data.message){
+        setError(rror.response.data.message);
+      }
+      else{
+        setError("Something went wrong. Please try again.")
+      }   
     }
+    finally{
+        setIsUpdateLoader(false);
+      }
   };
 
   useEffect(() => {
@@ -160,7 +197,26 @@ const InterviewPrep = () => {
                   isPinned={data?.isPinned}
                   onTogglePin={()=> toggleQuestionPinStatus(data._id)}
                   />
-                </>
+                
+
+                  {!isLoading && 
+                  sessionData?.questions?.length == index+1 && (
+                    <div className="flex items-center justify-center mt-5">
+                      <button
+                      className="flex items-center gap-3 text-sm text-white font-medium bg-black px-5 py-2 mr-2 rounded text-nowrap cursor-pointer"
+                      disabled={isLoading || isUpdateLoader}
+                      onClick={uploadMoreQuestions}
+                      >
+                      {isUpdateLoader ? (
+                        <SpinnerLoader />
+                      ):(
+                        <LuListCollapse className="text-lg" />
+                      )}{" "}
+                      Load More </button>
+
+                    </div>
+                  )}
+                   </>
               </motion.div>
             );
           })}
@@ -179,7 +235,7 @@ const InterviewPrep = () => {
               {errorMsg}
             </p>
           )}
-          {!isLoading && <SkeletonLoader />}
+          {isLoading && <SkeletonLoader />}
           {!isLoading && explanation && (
             <AIResponsePreview content={explanation?.explanation} />
           )}
